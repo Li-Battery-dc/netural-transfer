@@ -4,20 +4,51 @@ import json
 import os
 import glob
 
-root ="/Users/13102/Desktop/Introduction_AI/wikiart"
+root ="wikiart"
 
-parquet_path=root+"/data"
+
+parquet_path=root+"/raw_data"
+train_path=root+"/train"
+test_path=root+"/test"
+
 images_path=root+"/images"
 labels_path=root+"/labels"
 
+if not os.path.exists(train_path):
+    os.makedirs(train_path)
+
+if not os.path.exists(test_path):
+    os.makedirs(test_path)
+    
+i=0
 #读取 Parquet 文件
 for file in sorted((os.listdir(parquet_path))):
 
-    file_name=parquet_path+"/"+file
+    if i<5:
+        images_savedpath=root+"/test"+"/images"
+        labels_savedpath=root+"/test"+"/labels"
+    else:
+        images_savedpath=root+"/train"+"/images"
+        labels_savedpath=root+"/train"+"/labels"
 
-    basename=os.path.basename(file_name)
-    name_without_extension = os.path.splitext(basename)[0]  # 去除扩展名：'filename'
-    df = pd.read_parquet(file_name, engine='pyarrow')
+
+    if not os.path.exists(images_savedpath):
+        os.makedirs(images_savedpath)
+    if not os.path.exists(labels_savedpath):
+        os.makedirs(labels_savedpath)
+
+    prefix_to_remove = 'train-'
+    if file.startswith(prefix_to_remove):
+        # 去除前缀
+        saved_filename = file[len(prefix_to_remove):]
+    else:
+        # 如果文件名不以指定前缀开头，则保持原样
+        saved_filename = file
+
+    readfile_path=parquet_path+"/"+file
+
+    saved_filename= os.path.splitext(saved_filename)[0]  # 去除扩展名：'train''filename'
+    df = pd.read_parquet(readfile_path, engine='pyarrow')
     # 初始化一个字典用于存储图像文件名和对应的 genre
     image_genre_mapping = {}
 
@@ -26,18 +57,20 @@ for file in sorted((os.listdir(parquet_path))):
         # 提取图像字节数据
         image_data = row['image']['bytes']
         # 定义图像文件名
-        if not os.path.exists(f'{images_path}/{name_without_extension}'):
-            os.makedirs(f'{images_path}/{name_without_extension}')
-        image_filename=f'{images_path}/{name_without_extension}/image_{index}.jpg'
-        image_name = f'{name_without_extension}/image_{index}.jpg'
+        image_savedpath = f'{images_savedpath}/{saved_filename}/image_{index}.jpg'
+        image_name = f'{saved_filename}/image_{index}.jpg'
         # 将图像字节数据写入文件
-        with open(image_filename, 'wb') as img_file:
+        if not os.path.exists(f'{images_savedpath}/{saved_filename}'):
+            os.makedirs(f'{images_savedpath}/{saved_filename}')
+
+        with open(image_savedpath, 'wb') as img_file:
             img_file.write(image_data)
         # 将图像文件名和对应的 genre 添加到字典中
         image_genre_mapping[image_name] = row['genre']
 
     # 将 image_genre_mapping 字典保存为 JSON 文件
-    with open(f'{labels_path}/{name_without_extension}.json', 'w') as json_file:
+    with open(f'{labels_savedpath}/{saved_filename}.json', 'w') as json_file:
         json.dump(image_genre_mapping, json_file, indent=4)
 
     print("图像和 genre 信息已成功保存。")
+    i+=1

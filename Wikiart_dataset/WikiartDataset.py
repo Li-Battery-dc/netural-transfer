@@ -18,8 +18,8 @@ class WikiArtDataset(Dataset):
         ])
         self.transform=transform
 
-        self.image_dir=os.path.join(mode_file,'images')#wikiart/train/images
-        self.label_dir=os.path.join(mode_file,'labels')#wikiart/train/labels
+        self.image_dir=os.path.join(mode_file,'images')
+        self.label_dir=os.path.join(mode_file,'labels')
 
         self.folders = sorted(os.listdir(self.image_dir))
 
@@ -27,15 +27,15 @@ class WikiArtDataset(Dataset):
         self.labels=[]
 
         for folder in self.folders:
-            img_folder = os.path.join(self.image_dir,folder)#wikiart/images/xxx
-            label_file=os.path.join(self.label_dir,f"{folder}.json")#wikiart/labels/xxx.json
+            img_folder = os.path.join(self.image_dir,folder)
+            label_file=os.path.join(self.label_dir,f"{folder}.json")
 
             with open(label_file,'r',encoding="utf-8") as f:
                 label_data = json.load(f)
 
             for img_name,label in label_data.items():
                 img_basename = os.path.basename(img_name)
-                img_path=os.path.join(img_folder,img_basename)#wikiart/images/train-00000-of-00072/image_0.jpg
+                img_path=os.path.join(img_folder,img_basename)
                 self.image_paths.append(img_path)
                 self.labels.append(label)
 
@@ -49,7 +49,7 @@ class WikiArtDataset(Dataset):
         label=self.labels[idx]
         image = Image.open(img_path).convert("RGB")
 
-        # print(img_path)
+        print(img_path)
 
         #如果有图像预处理，可以放在这里(可以修改)
         if self.transform:
