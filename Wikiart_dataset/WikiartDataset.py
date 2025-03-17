@@ -1,0 +1,58 @@
+import os
+from PIL import Image
+from torch.utils.data import Dataset
+from torchvision import transforms
+import json
+
+class WikiArtDataset(Dataset):
+    def __init__(self,root_dir='wikiart',mode='train',transform=None):
+        super().__init__()
+        self.root_dir=root_dir
+        self.mode = mode
+        mode_file=os.path.join(self.root_dir,mode)#wikiart/train or wikiart/test
+
+        #这里是对图像的预处理，可以再改
+        transform = transforms.Compose([
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+        ])
+        self.transform=transform
+
+        self.image_dir=os.path.join(mode_file,'images')#wikiart/train/images
+        self.label_dir=os.path.join(mode_file,'labels')#wikiart/train/labels
+
+        self.folders = sorted(os.listdir(self.image_dir))
+
+        self.image_paths=[]
+        self.labels=[]
+
+        for folder in self.folders:
+            img_folder = os.path.join(self.image_dir,folder)#wikiart/images/xxx
+            label_file=os.path.join(self.label_dir,f"{folder}.json")#wikiart/labels/xxx.json
+
+            with open(label_file,'r',encoding="utf-8") as f:
+                label_data = json.load(f)
+
+            for img_name,label in label_data.items():
+                img_basename = os.path.basename(img_name)
+                img_path=os.path.join(img_folder,img_basename)#wikiart/images/train-00000-of-00072/image_0.jpg
+                self.image_paths.append(img_path)
+                self.labels.append(label)
+
+
+
+    def __len__(self):
+        return len(self.image_paths)
+    
+    def __getitem__(self,idx):
+        img_path = self.image_paths[idx]
+        label=self.labels[idx]
+        image = Image.open(img_path).convert("RGB")
+
+        # print(img_path)
+
+        #如果有图像预处理，可以放在这里(可以修改)
+        if self.transform:
+            image = self.transform(image)
+
+        return image,label
