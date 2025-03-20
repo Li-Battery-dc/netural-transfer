@@ -18,23 +18,25 @@ class geneNet(nn.Module):
         self.res4 = ResidualBlock(128)
         self.res5 = ResidualBlock(128)
         # 上卷积恢复模块
-        self.deconv1 = nn.ConvTranspose2d(128, 64, kernel_size=3, stride=1, padding=1, output_padding=1)
+        self.deconv1 = UpsampleConvLayer(128, 64, kernel_size=3, stride=1, upsample=2)
         self.in4 = nn.InstanceNorm2d(64, affine=True)
-        self.deconv2 = nn.ConvTranspose2d(64, 32, kernel_size=3, stride=1, padding=1, output_padding=1)
+        self.deconv2 = UpsampleConvLayer(64, 32, kernel_size=3, stride=1, upsample=2)
         self.in5 = nn.InstanceNorm2d(32, affine=True)
         self.deconv3 = nn.Conv2d(32, 3, kernel_size=9, stride=1, padding=4)
         # 非线性激活函数输出
-        self.relu = nn.ReLU()
+        self.relu = nn.ReLU(inplace=False)
     
     def forward(self, x):
         y = self.relu(self.in1(self.conv1(x)))
         y = self.relu(self.in2(self.conv2(y)))
         y = self.relu(self.in3(self.conv3(y)))
+
         y = self.res1(y)
         y = self.res2(y)
         y = self.res3(y)
         y = self.res4(y)
         y = self.res5(y)
+
         y = self.relu(self.in4(self.deconv1(y)))
         y = self.relu(self.in5(self.deconv2(y)))
         y = self.deconv3(y)
@@ -45,10 +47,10 @@ class ResidualBlock(nn.Module):
     def __init__(self, channels):
         super(ResidualBlock, self).__init__()
         self.block = nn.Sequential(
-            nn.Conv2d(channels, channels, kernel_size=3, stride=1),
+            nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
             nn.InstanceNorm2d(channels, affine=True),
-            nn.ReLU(),
-            nn.Conv2d(channels, channels, kernel_size=3, stride=1),
+            nn.ReLU(inplace=False),
+            nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
             nn.InstanceNorm2d(channels, affine=True)
         )
 
@@ -80,6 +82,7 @@ class UpsampleConvLayer(nn.Module):
 
     def forward(self, x):
         x_in = x
+        # 显式调用interpolate函数，对输入进行上采样
         if self.upsample:
             x_in = nn.functional.interpolate(x_in, mode='nearest', scale_factor=self.upsample)
         out = self.reflection_pad(x_in)
