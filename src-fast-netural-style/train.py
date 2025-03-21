@@ -12,12 +12,13 @@ from geneNet import geneNet
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.set_default_device(device)
 
-def train_geneNet(style_img_path, batch_size=5, alpha=1e-6, epochs=5):
+def train_geneNet(style_img_path, batch_size=5, num_image=5000, alpha=1e-6, epochs=5):
     '''
     param: style_img_path: 风格图片路径
     param: batch_size: 批次大小
     param: alpha: content_loss/style_loss表示权重
     param: epochs: 训练轮数
+    para: num_image: 导入的训练图片数量
     '''
     lossNet = Vgg16(requires_grad=False).to(device)
     image_size = 512
@@ -37,7 +38,7 @@ def train_geneNet(style_img_path, batch_size=5, alpha=1e-6, epochs=5):
     dataset = FolderDataset(
         root_dir="./data-COCO/COCO-img",
         image_size=image_size,
-        num_image=10,
+        num_image=num_image,
         mode="random",
     )
     # 导入时已经可以选择随机导入,不打开shuffle
