@@ -38,9 +38,13 @@ def main():
     from train import train_geneNet
     style_img_path = "./images/style/monet.jpg"
     batch_size = 5
-    alpha = 1e-6
-    epochs = 5
-    train_geneNet(style_img_path=style_img_path,batch_size=batch_size,alpha=alpha,epochs=epochs)
+    alpha = 5e-6
+    epochs = 2
+    train_geneNet(style_img_path=style_img_path, save_model_name="monet.pth",num_image=6000,
+                  batch_size=batch_size,alpha=alpha,epochs=epochs)
+    # stylize(content_img_path="./images/content/yulan.jpg", 
+    #         model_path="./check_point/check_point_2_batch_id_500.pth", 
+    #         output_name="yulan_monet.jpg")
     return
     # print("stylize or train geneNet?")
     # print("1. stylize")
