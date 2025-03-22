@@ -4,9 +4,8 @@ from PIL import Image, ImageTk
 
 from main import stylize
 
-# 假设你已经定义了风格迁移的函数，例如：
 def style_transfer_function(content_image_path, style,outputname="output.jpg"):
-    stylized_image=stylize(content_img_path=content_image_path, model_path="./saved_model/wave_model.pth", output_name=outputname)
+    stylized_image=stylize(content_img_path=content_image_path, model_path="./saved_model/"+style+".pth", output_name=outputname)
     stylized_image=Image.open("./images/output/"+outputname)
     return stylized_image
 
@@ -32,7 +31,13 @@ def apply_style():
         print("请先上传图片")
         return
     selected_style = style_var.get()
-    print(original_image_path)
+    if selected_style == "风格1":
+        selected_style = "wave_model"
+    elif selected_style == "风格2":
+        selected_style = "monet_model"
+
+    print("应用风格：", selected_style)
+    print("原始图片:",original_image_path)
     # 调用风格迁移函数处理图片
     styled_image = style_transfer_function(original_image_path, selected_style)
     display_styled = styled_image.resize((300, 300))
