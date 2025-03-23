@@ -28,7 +28,7 @@ def stylize(content_img_path, model_path, output_name="output.jpg"):
         gene_net.eval()
         output = gene_net(content_img).cpu()
     
-    utils.save_image("./images/output/" + output_name, output[0])
+    utils.save_image("./src-fast-netural-style/images/output/" + output_name, output[0])
 
     end_time = time.time()
     print("Stylize image saved as", output_name)
