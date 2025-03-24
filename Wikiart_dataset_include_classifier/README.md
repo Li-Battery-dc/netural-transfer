@@ -64,3 +64,7 @@ python train_models/wikiart_train_model_DualPathResNetUNet-18.py
 ```
 
 在 checkpoint 里面可以找到之前训练好的模型。（超参数在文件名里）正确率大概可以到 67%
+
+## 使用
+
+在 eval 文件夹里的 use_model.py 文件可以使用训练好的模型。
