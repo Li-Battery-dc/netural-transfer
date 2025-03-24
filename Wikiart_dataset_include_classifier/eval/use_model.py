@@ -38,6 +38,7 @@ def classify(image_path):
 >>>>>>> 026f7d8f46f0ec2d8c576d615228668b3148cb5e
 
     # 推理
+    model.eval()
     with torch.no_grad():
         output = model(input_tensor)
     predicted_class = output.argmax(dim=1).item()
