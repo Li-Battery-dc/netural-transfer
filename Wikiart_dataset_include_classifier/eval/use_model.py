@@ -10,7 +10,7 @@ from PIL import Image
 
 # 加载模型
 model= DualPathResNet18_UNet(num_classes=11)
-checkpoint = torch.load('../train_models/checkpoint/DualPathResNet18-UNet_lr0.03_sgd_batchsize64_epochs50_weight_decay0.0004.pth', map_location=torch.device('cpu'),weights_only=True)
+checkpoint = torch.load('../train_models/checkpoint/DualPathResNet18-UNet_lr0.03_sgd_batchsize64_epochs50_weight_decay0.0007.pth', map_location=torch.device('cpu'),weights_only=True)
 model.load_state_dict(checkpoint['model_state_dict'])
 # 预处理图像
 image = Image.open('test.jpg')
