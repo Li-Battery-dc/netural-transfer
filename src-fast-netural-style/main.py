@@ -12,7 +12,7 @@ import utils
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.set_default_device(device)
 
-def stylize(content_img_path, model_path, output_dir="src-fast-netural-style/images/output/", output_path="output.jpg"):
+def stylize(content_img_path, model_path, output_dir="src-fast-netural-style/images/output/", output_name="output.jpg"):
     start_time = time.time()
  
     content_transform = transforms.Compose([
@@ -57,8 +57,9 @@ def main():
         model_path = os.path.join("src-fast-netural-style/saved_model", model_name)
         if os.path.isfile(model_path) and model_name.lower().endswith('.pth'):
             content_img_path = "src-fast-netural-style/images/content/road_flower.jpg"
-            output_path = "road_flower" + f"{os.path.splitext(model_name)[0]}" + "_road_flower.jpg"
-            stylize(content_img_path, model_path, output_path=output_path)
+            output_dir = "src-fast-netural-style/images/output/road_flower/"
+            output_name = f"{os.path.splitext(model_name)[0]}" + "_road_flower.jpg"
+            stylize(content_img_path, model_path, output_dir=output_dir, output_name=output_name)
     
     
     return
