@@ -12,7 +12,7 @@ import utils
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.set_default_device(device)
 
-def stylize(content_img_path, model_path, output_name="output.jpg"):
+def stylize(content_img_path, model_path, output_dir="src-fast-netural-style/images/output/", output_path="output.jpg"):
     start_time = time.time()
  
     content_transform = transforms.Compose([
@@ -28,46 +28,40 @@ def stylize(content_img_path, model_path, output_name="output.jpg"):
         gene_net.eval()
         output = gene_net(content_img).cpu()
     
-    utils.save_image("./src-fast-netural-style/images/output/" + output_name, output[0])
+    utils.save_image(output_dir + output_path, output[0])
 
     end_time = time.time()
-    print("Stylize image saved as", output_name)
+    print("Stylize image saved as", output_path)
     print("Time elapsed:", end_time - start_time)
 
 def main():
-    from train import train_geneNet
-    style_img_path = "./images/style/monet.jpg"
-    batch_size = 5
-    alpha = 5e-6
-    epochs = 2
-    train_geneNet(style_img_path=style_img_path, save_model_name="monet.pth",num_image=6000,
-                  batch_size=batch_size,alpha=alpha,epochs=epochs)
-    # stylize(content_img_path="./images/content/yulan.jpg", 
-    #         model_path="./check_point/check_point_2_batch_id_500.pth", 
-    #         output_name="yulan_monet.jpg")
+    # from train import train_geneNet
+    # style_img_dir = "src-fast-netural-style/images/style"
+    # batch_size = 5
+    # alpha = 6e-6
+    # epochs = 2
+    # num_image = 10000
+    
+    # for style_img_name in os.listdir(style_img_dir):
+    #     style_img_path = os.path.join(style_img_dir, style_img_name)
+    #     if os.path.isfile(style_img_path) and style_img_name.lower().endswith(('.png', '.jpg', '.jpeg')):
+    #         # 动态生成模型名称
+    #         model_name = f"{os.path.splitext(style_img_name)[0]}"
+    #         print(f"Training with style image: {style_img_name}")
+    #         # 调用 train_geneNet 进行训练
+    #         train_geneNet(style_img_path=style_img_path, save_model_name=model_name, 
+    #                       num_image=num_image, batch_size=batch_size, alpha=alpha, epochs=epochs)
+    #         print(f"Model saved as: {model_name}")
+
+    for model_name in os.listdir("src-fast-netural-style/saved_model"):
+        model_path = os.path.join("src-fast-netural-style/saved_model", model_name)
+        if os.path.isfile(model_path) and model_name.lower().endswith('.pth'):
+            content_img_path = "src-fast-netural-style/images/content/road_flower.jpg"
+            output_path = "road_flower" + f"{os.path.splitext(model_name)[0]}" + "_road_flower.jpg"
+            stylize(content_img_path, model_path, output_path=output_path)
+    
+    
     return
-    # print("stylize or train geneNet?")
-    # print("1. stylize")
-    # print("2. train geneNet")
-    # choice = int(input())
-    # if choice == 1:
-    #     content_img_path = input("Content image path: ")
-    #     model_path = input("Model path: ")
-    #     output_name = input("Output name: ")
-    #     stylize(content_img_path=content_img_path,
-    #             model_path=model_path,
-    #             output_name=output_name)
-    # else:
-    #     from train import train_geneNet
-    #     style_img_path = input("Style image path for train: ")
-    #     batch_size = int(input("Batch size: "))
-    #     alpha = float(input("content_loss/style_loss rate: "))
-    #     epochs = int(input("Epochs: "))
-    #     train_geneNet(style_img_path=style_img_path,
-    #                   batch_size=batch_size,
-    #                   alpha=alpha,
-    #                   epochs=epochs)
-    #     return
 
 if __name__ == "__main__":
     main()

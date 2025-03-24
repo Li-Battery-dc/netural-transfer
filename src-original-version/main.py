@@ -22,8 +22,8 @@ def load_image(path):
     return img.to(device, torch.float32)
 
 # 输入图片
-content_img = load_image("images/myPicture.jpg")
-style_img = load_image("images/picasso.jpg")
+content_img = load_image("src-original-version/images/myPicture.jpg")
+style_img = load_image("src-original-version/images/picasso.jpg")
 
 input_img = content_img.clone()
 # 使用随机图片初始化
