@@ -9,6 +9,7 @@ stylize parameter:
 
 - content_img_pth：输入图片的路径
 - model_pth: 加载模型的路径
+- output_dir: 输出图片的路径,默认为src-fast-netural-style/images/output/
 - output_name: 输出图片的名称，现在指定路径为images/output/output_name.jpg
 
 ### train.py
@@ -53,4 +54,3 @@ parameter:
 ### saved_model/.pth
 
 保存的模型文件
-
