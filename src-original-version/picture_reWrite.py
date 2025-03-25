@@ -5,4 +5,4 @@ def reWriteImg(img_path, img_size):
     img = cv.resize(img, (img_size, img_size))
     cv.imwrite(img_path, img)
 
-reWriteImg("images/Vangoh.jpg", 500)
+reWriteImg("src-original-version/images/sun.jpg", 512)

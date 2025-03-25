@@ -34,10 +34,22 @@ def apply_style():
     selected_style = style_var.get()
     if selected_style == "莫奈风格":
         selected_style = "monet.pth"
-    elif selected_style == "糖果风格":
-        selected_style = "candy.pth"
+    elif selected_style == "日出印象风格":
+        selected_style = "monet_sunrise.pth"
+    elif selected_style == "立体派风格":
+        selected_style = "cubist.pth"
     elif selected_style == "海浪风格":
-        selected_style = "wave_model.pth"
+        selected_style = "wave.pth"
+    elif selected_style == "羽毛风格":
+        selected_style = "feathers.pth"
+    elif selected_style == "毕加索风":
+        selected_style = "picasso.pth"
+    elif selected_style == "呐喊风格":
+        selected_style = "scream.pth"
+    elif selected_style == "梵高星空风格":
+        selected_style = "starry_night.pth"
+    elif selected_style == "udnie风格":
+        selected_style = "udnie.pth"
 
     print("应用风格：", selected_style)
     print("原始图片:", original_image_path)
@@ -62,7 +74,7 @@ def main_application():
 
     style_var = tk.StringVar(root)
     style_var.set("莫奈风格")
-    style_options = ["莫奈风格", "糖果风格", "海浪风格"]
+    style_options = ["莫奈风格", "日出印象风格", "立体派风格", "海浪风格", "羽毛风格", "毕加索风", "呐喊风格", "梵高星空风格", "udnie风格"]
     style_menu = tk.OptionMenu(top_frame, style_var, *style_options)
     style_menu.config(font=("Arial", 12), width=10)
     style_menu.pack(side=tk.LEFT, padx=10)

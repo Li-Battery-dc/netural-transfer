@@ -5,4 +5,4 @@ def reWriteImg(img_path, img_size):
     img = cv.resize(img, (img_size, img_size))
     cv.imwrite(img_path, img)
 
-reWriteImg("images/content/yulan.jpg", 1024)
+reWriteImg("src-fast-netural-style/images/output/starrynight/starry_night_duck.jpg", 512)

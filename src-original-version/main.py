@@ -22,8 +22,8 @@ def load_image(path):
     return img.to(device, torch.float32)
 
 # 输入图片
-content_img = load_image("src-original-version/images/myPicture.jpg")
-style_img = load_image("src-original-version/images/picasso.jpg")
+content_img = load_image("src-original-version/images/sun.jpg")
+style_img = load_image("src-original-version/images/Starry_Night.jpg")
 
 input_img = content_img.clone()
 # 使用随机图片初始化
@@ -37,8 +37,8 @@ assert style_img.size() == content_img.size(), \
 cnn = vgg19(weights=VGG19_Weights.DEFAULT).features.eval()
 
 # 计算loss的卷积层
-content_layers_default = ['conv_5']
-style_layers_default = ['conv_1', 'conv_2', 'conv_3', 'conv_4', 'conv_5']
+content_layers_default = ['conv_4']
+style_layers_default = ['conv_1', 'conv_2', 'conv_3', 'conv_4', 'conv_5'] 
 
 from module import Normalization, ContentLoss, StyleLoss
 
@@ -101,6 +101,7 @@ style_weight = 1000000
 content_weight = 1
 
 # 梯度下降
+import time
 def run(cnn, content_img, style_img, input_img, num_steps=300):
 
     print('Building the style transfer model..')
@@ -115,6 +116,7 @@ def run(cnn, content_img, style_img, input_img, num_steps=300):
     optimizer = optim.LBFGS([input_img])
 
     print('Optimizing..')
+    start_time = time.time()
     run = [0]
     while run[0] <= num_steps:
         def closure():
@@ -145,21 +147,25 @@ def run(cnn, content_img, style_img, input_img, num_steps=300):
             return loss
 
         optimizer.step(closure)
-
+    
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Time elapsed: {elapsed_time}")
     with torch.no_grad(): 
         input_img.data.clamp_(0, 1)
 
-    print("Now the model look like:")
-    print(model)
+    # print("Now the model look like:")
+    # print(model)
     return input_img
 
 # 调用时使用input_img.clone()，避免修改原始数据
 output_image = run(cnn, content_img, style_img, input_img.clone())
 
-from show_picture import imshow
+from show_picture import imshow,imsave
 from matplotlib import pyplot as plt
 
 plt.figure(figsize=(12, 8))
+imsave(output_image, "src-original-version/images/output.jpg")
 
 plt.subplot(2, 2, 1)
 imshow(content_img, title='Content Image')

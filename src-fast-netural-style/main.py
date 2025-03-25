@@ -28,19 +28,19 @@ def stylize(content_img_path, model_path, output_dir="src-fast-netural-style/ima
         gene_net.eval()
         output = gene_net(content_img).cpu()
     
-    utils.save_image(output_dir + output_path, output[0])
+    utils.save_image(output_dir + output_name, output[0])
 
     end_time = time.time()
-    print("Stylize image saved as", output_path)
+    print("Stylize image saved as", output_name)
     print("Time elapsed:", end_time - start_time)
 
 def main():
-    # from train import train_geneNet
-    # style_img_dir = "src-fast-netural-style/images/style"
-    # batch_size = 5
-    # alpha = 6e-6
-    # epochs = 2
-    # num_image = 10000
+    from train import train_geneNet
+    style_img_dir = "src-fast-netural-style/images/style"
+    batch_size = 5
+    alpha = 2e-5
+    epochs = 1
+    num_image = 5000
     
     # for style_img_name in os.listdir(style_img_dir):
     #     style_img_path = os.path.join(style_img_dir, style_img_name)
@@ -53,13 +53,26 @@ def main():
     #                       num_image=num_image, batch_size=batch_size, alpha=alpha, epochs=epochs)
     #         print(f"Model saved as: {model_name}")
 
-    for model_name in os.listdir("src-fast-netural-style/saved_model"):
-        model_path = os.path.join("src-fast-netural-style/saved_model", model_name)
-        if os.path.isfile(model_path) and model_name.lower().endswith('.pth'):
-            content_img_path = "src-fast-netural-style/images/content/road_flower.jpg"
-            output_dir = "src-fast-netural-style/images/output/road_flower/"
-            output_name = f"{os.path.splitext(model_name)[0]}" + "_road_flower.jpg"
-            stylize(content_img_path, model_path, output_dir=output_dir, output_name=output_name)
+    # for model_name in os.listdir("src-fast-netural-style/saved_model"):
+    #     model_path = os.path.join("src-fast-netural-style/saved_model", model_name)
+    #     if os.path.isfile(model_path) and model_name.lower().endswith('.pth'):
+    #         content_img_path = "src-fast-netural-style/images/content/duck.jpg"
+    #         output_dir = "src-fast-netural-style/images/output/duck/"
+    #         output_name = f"{os.path.splitext(model_name)[0]}" + "_duck.jpg"
+    #         stylize(content_img_path, model_path, output_dir=output_dir, output_name=output_name)
+
+    style_img_path = style_img_dir + "/starry_night.jpg"
+    train_geneNet(style_img_path=style_img_path, save_model_name="starry_night", 
+                          num_image=num_image, batch_size=batch_size, alpha=alpha, epochs=epochs)
+    for content in os.listdir("src-fast-netural-style/images/content"):
+        content_img_path = os.path.join("src-fast-netural-style/images/content", content)
+        if os.path.isfile(content_img_path) and content.lower().endswith(('.png', '.jpg', '.jpeg')):
+            model_name = "starry_night.pth"
+            model_path = os.path.join("src-fast-netural-style/saved_model", model_name)
+            if os.path.isfile(model_path) and model_name.lower().endswith('.pth'):
+                output_dir = "src-fast-netural-style/images/output/starrynight/"
+                output_name = f"{os.path.splitext(model_name)[0]}" + "_" + content
+                stylize(content_img_path, model_path, output_dir=output_dir, output_name=output_name)
     
     
     return
