@@ -4,11 +4,11 @@ class geneNet(nn.Module):
     def __init__(self):
         super(geneNet, self).__init__()
         # 下卷积采样模块
-        self.conv1 = Convlayer(3, 32, kernel_size=9, stride=1)
+        self.conv1 = nn.Conv2d(3, 32, kernel_size=9, stride=1)
         self.in1 = nn.InstanceNorm2d(32, affine=True)
-        self.conv2 =Convlayer(32, 64, kernel_size=3, stride=2)
+        self.conv2 =nn.Conv2d(32, 64, kernel_size=3, stride=2)
         self.in2 = nn.InstanceNorm2d(64, affine=True)
-        self.conv3 = Convlayer(64, 128, kernel_size=3, stride=2)
+        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=2)
         self.in3 = nn.InstanceNorm2d(128, affine=True)
         # 残差块
         self.res1 = ResidualBlock(128)
@@ -21,7 +21,7 @@ class geneNet(nn.Module):
         self.in4 = nn.InstanceNorm2d(64, affine=True)
         self.deconv2 = UpsampleConvLayer(64, 32, kernel_size=3, stride=1, upsample=2)
         self.in5 = nn.InstanceNorm2d(32, affine=True)
-        self.deconv3 = Convlayer(32, 3, kernel_size=9, stride=1)
+        self.deconv3 = nn.Conv2d(32, 3, kernel_size=9, stride=1)
         # 非线性激活函数输出
         self.relu = nn.ReLU(inplace=False)
     

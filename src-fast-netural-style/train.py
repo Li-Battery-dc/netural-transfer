@@ -12,7 +12,7 @@ from geneNet import geneNet
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.set_default_device(device)
 
-def train_geneNet(style_img_path, save_model_name="geneNet",
+def train_geneNet(style_img_path, save_model_name="geneNet.pth",
                 batch_size=5, num_image=5000, alpha=1e-6, epochs=5):
     '''
     param: style_img_path: 风格图片路径
@@ -38,7 +38,7 @@ def train_geneNet(style_img_path, save_model_name="geneNet",
     # 导入训练数据
     from folder_data_handle import FolderDataset
     dataset = FolderDataset(
-        root_dir="src-fast-netural-style/data-COCO/COCO-img",
+        root_dir="./data-COCO/COCO-img",
         image_size=image_size,
         num_image=num_image,
         mode="random",
@@ -49,14 +49,10 @@ def train_geneNet(style_img_path, save_model_name="geneNet",
 
     # 训练生成网络
     gene_net = geneNet().to(device)
-    optimizer = torch.optim.Adam(gene_net.parameters(), lr=0.003)
+    optimizer = torch.optim.Adam(gene_net.parameters(), lr=0.001)
 
     # 日志信息
-    loss_history = {
-        "total_loss": [],
-        "content_loss": [],
-        "style_loss": []
-    }
+    loss_history = []
     torch.autograd.set_detect_anomaly(True)
     for e in range(epochs):
         gene_net.train()
@@ -87,7 +83,7 @@ def train_geneNet(style_img_path, save_model_name="geneNet",
             optimizer.step()
 
             # 设置学习率衰减
-            if num_trained_images > 0 and num_trained_images % 1000 == 0:
+            if num_trained_images > 0 and num_trained_images % 500 == 0:
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = param_group['lr'] * 0.9
 
@@ -100,17 +96,15 @@ def train_geneNet(style_img_path, save_model_name="geneNet",
                     optimizer.param_groups[0]['lr']
                 )
                 print(mesg)
-                loss_history["total_loss"].append(loss.item())
-                loss_history["content_loss"].append(alpha * content_loss.item())
-                loss_history["style_loss"].append(style_loss.item())
+                loss_history.append(loss.item())
 
             num_trained_images = num_trained_images + len(images)
             
-            check_point_interval = 1000
-            check_point_dir = "src-fast-netural-style/check_point"
+            check_point_interval = 500
+            check_point_dir = "./check_point"
             if check_point_dir is not None and batch_i % check_point_interval == 0:
                 gene_net.eval().cpu()
-                checkpoint_name = save_model_name + "_check_point_{}_batch_id_{}.pth".format(e+1, batch_i)
+                checkpoint_name = "check_point_{}_batch_id_{}.pth".format(e+1, batch_i)
                 checkpoint_path = os.path.join(check_point_dir, checkpoint_name)
                 torch.save(gene_net.state_dict(), checkpoint_path)
                 gene_net.to(device).train()
@@ -118,20 +112,18 @@ def train_geneNet(style_img_path, save_model_name="geneNet",
     # 保存日志
     import matplotlib.pyplot as plt  # 用于绘制和保存图表
     plt.figure(figsize=(10, 5))
-    plt.plot(loss_history["total_loss"], label='Total Loss', color='blue')
-    plt.plot(loss_history["content_loss"], label='alpha * Content Loss', color='green')
-    plt.plot(loss_history["style_loss"], label='Style Loss', color='red')
-    plt.xlabel('per 50 Batch')
+    plt.plot(loss_history, label='Loss')
+    plt.xlabel('Batch')
     plt.ylabel('Loss')
     plt.title('Loss Curve')
     plt.legend()
     plt.grid()
-    plt.savefig('src-fast-netural-style/images/loss_log/loss_curve.png')
+    plt.savefig('./images/loss_log/loss_curve.png')
 
     # 保存模型
     gene_net.eval().cpu()
-    save_model_dir = "src-fast-netural-style/saved_model"
-    save_model_path = os.path.join(save_model_dir, save_model_name+".pth")
+    save_model_dir = "./saved_model"
+    save_model_path = os.path.join(save_model_dir, save_model_name)
     torch.save(gene_net.state_dict(), save_model_path)
 
     print("\nDone, trained model saved at", save_model_path)

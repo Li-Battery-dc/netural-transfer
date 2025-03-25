@@ -12,7 +12,7 @@ import utils
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 torch.set_default_device(device)
 
-def stylize(content_img_path, model_path, output_dir="src-fast-netural-style/images/output/", output_name="output.jpg"):
+def stylize(content_img_path, model_path, output_name="output.jpg"):
     start_time = time.time()
  
     content_transform = transforms.Compose([
@@ -76,6 +76,28 @@ def main():
     
     
     return
+    # print("stylize or train geneNet?")
+    # print("1. stylize")
+    # print("2. train geneNet")
+    # choice = int(input())
+    # if choice == 1:
+    #     content_img_path = input("Content image path: ")
+    #     model_path = input("Model path: ")
+    #     output_name = input("Output name: ")
+    #     stylize(content_img_path=content_img_path,
+    #             model_path=model_path,
+    #             output_name=output_name)
+    # else:
+    #     from train import train_geneNet
+    #     style_img_path = input("Style image path for train: ")
+    #     batch_size = int(input("Batch size: "))
+    #     alpha = float(input("content_loss/style_loss rate: "))
+    #     epochs = int(input("Epochs: "))
+    #     train_geneNet(style_img_path=style_img_path,
+    #                   batch_size=batch_size,
+    #                   alpha=alpha,
+    #                   epochs=epochs)
+    #     return
 
 if __name__ == "__main__":
     main()
