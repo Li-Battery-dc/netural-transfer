@@ -10,17 +10,21 @@ from PIL import Image
 def classify(image_path):
 
     # 加载模型
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model= DualPathResNet18_UNet(num_classes=11)
-    checkpoint = torch.load('../train_models/checkpoint/DualPathResNet18-UNet_lr0.03_sgd_batchsize64_epochs50_weight_decay0.0007.pth', map_location=torch.device('cpu'),weights_only=True)
+    checkpoint = torch.load('Wikiart_dataset_include_classifier/train_models/checkpoint/DualPathResNet18-UNet_lr0.03_sgd_batchsize64_epochs50_weight_decay0.0007.pth',
+                             map_location=torch.device(device), weights_only=True)
     model.load_state_dict(checkpoint['model_state_dict'])
+    model = model.to(device)
     # 预处理图像
-    image = Image.open('image_path')
+    image = Image.open(image_path)
     transform = transforms.Compose([
                 transforms.Resize((256, 256)),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
             ])  # 与训练时相同的预处理
-    input_tensor = transform(image).unsqueeze(0)  # 增加batch维度
+    input_tensor = transform(image).unsqueeze(0)
+    input_tensor = input_tensor.to(device)  # 增加batch维度
 
     # 推理
     model.eval()

@@ -7,4 +7,4 @@
 - Wikiart_dataset: 构建对Wikiart数据集的处理类
 - Wikiart_dataset_include_classifier: 基于Wikiart数据集训练得到的风格分类网络
 
-使用方法：运行src-fast-netural-stye/GUI.py即可展示GUI界面
+使用方法：运行GUI.py即可展示GUI界面
