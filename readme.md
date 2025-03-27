@@ -8,3 +8,4 @@
 - Wikiart_dataset_include_classifier: 基于Wikiart数据集训练得到的风格分类网络
 
 使用方法：运行GUI.py即可展示GUI界面
+注：上传的图片过大可能会出现显存溢出等问题，可以适当缩小图片分辨率
